@@ -1,0 +1,118 @@
+<!-- templates/index.html -->
+
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card shadow-sm">
+      <div class="card-header bg-white fw-semibold">Оформить выдачу</div>
+      <div class="card-body">
+        <form method="post" action="{{ url_for('create_loan') }}" class="needs-validation" novalidate>
+
+```
+      <div class="mb-3">
+        <label class="form-label">Читатель</label>
+        <select class="form-select" name="reader_id" required>
+          <option value="" selected disabled>Выберите...</option>
+          {% for r in readers %}
+            <option value="{{ r.id }}">{{ r.full_name }}</option>
+          {% endfor %}
+        </select>
+        <div class="invalid-feedback">Нужен читатель.</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Книга</label>
+        <select class="form-select" name="book_id" required>
+          <option value="" selected disabled>Выберите...</option>
+          {% for b in books %}
+            <option value="{{ b.id }}">{{ b.title }}</option>
+          {% endfor %}
+        </select>
+        <div class="invalid-feedback">Нужна книга.</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Библиотекарь</label>
+        <select class="form-select" name="librarian_id" required>
+          <option value="" selected disabled>Выберите...</option>
+          {% for lb in librarians %}
+            <option value="{{ lb.id }}">{{ lb.full_name }}</option>
+          {% endfor %}
+        </select>
+        <div class="invalid-feedback">Нужен библиотекарь.</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Статус</label>
+        <select class="form-select" name="status_id" required>
+          {% for s in statuses %}
+            <option value="{{ s.id }}">{{ s.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="row g-2">
+        <div class="col-md-4">
+          <label class="form-label">Дата выдачи</label>
+          <input class="form-control" type="date" name="issue_date" min="2026-01-01" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Срок возврата</label>
+          <input class="form-control" type="date" name="due_date" min="2026-01-01" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Дата возврата</label>
+          <input class="form-control" type="date" name="return_date" min="2026-01-01">
+        </div>
+      </div>
+
+      <button class="btn btn-accent w-100 mt-3" type="submit">Создать</button>
+    </form>
+
+    <div class="form-text mt-2">
+      Даты проверяются на сервере (до текущей даты + логика статуса).
+    </div>
+  </div>
+</div>
+
+</div>
+  <div class="col-lg-7">
+    <div class="card shadow-sm">
+      <div class="card-header bg-white fw-semibold">Выдачи</div>
+      <div class="table-responsive">
+        <table class="table table-sm table-striped mb-0 align-middle">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Выдача</th>
+              <th>Срок</th>
+              <th>Возврат</th>
+              <th>Читатель</th>
+              <th>Книга</th>
+              <th>Библиотекарь</th>
+              <th>Статус</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for l in loans %}
+              <tr>
+                <td>{{ l.id }}</td>
+                <td><code>{{ l.issue_date }}</code></td>
+                <td><code>{{ l.due_date }}</code></td>
+                <td>{{ l.return_date or '—' }}</td>
+                <td>{{ l.reader_name }}</td>
+                <td>{{ l.book_title }}</td>
+                <td>{{ l.librarian_name }}</td>
+                <td>{{ l.status_title }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
