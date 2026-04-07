@@ -5,12 +5,12 @@ import os
 import sqlite3
 from datetime import date
 from typing import Any, Dict, List, Optional, Tuple
-import pyodbc
+#import pyodbc
 
-def test_pyodbc_stub():
-    print("pyodbc подключен")
+#def test_pyodbc_stub():
+#    print("pyodbc подключен")
 
-test_pyodbc_stub()
+#test_pyodbc_stub()
 
 from flask import (
     Flask, g, render_template, request, redirect, url_for,
