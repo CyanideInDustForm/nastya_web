@@ -21,7 +21,6 @@
 <div class="card shadow-sm">
   <div class="card-header bg-white fw-semibold">Добавить запись в {{ table }}</div>
   <div class="card-body">
-
     {% if table == 'readers' %}
       <form method="post" action="{{ url_for('admin_create', table='readers') }}" class="needs-validation" novalidate>
         <div class="row g-2">
@@ -145,7 +144,6 @@
         <button class="btn btn-accent mt-3" type="submit">Добавить</button>
       </form>
     {% endif %}
-
   </div>
 </div>
 
@@ -167,9 +165,27 @@
     <tbody>
       {% for row in rows %}
         <tr>
-          {% for val in row.values() %}
-            <td>{{ val }}</td>
+          {% set non_editable_indexes = [] %}
+
+          {# определяем, какие колонки нельзя редактировать #}
+          {% if table == 'loans' %}
+            {% set non_editable_indexes = [0,1,2,3,4] %}
+          {% elif table == 'statuses' %}
+            {% set non_editable_indexes = range(row|length) %}
+          {% else %}
+            {% set non_editable_indexes = [0] %}
+          {% endif %}
+
+          {% for field, v in row.items() %}
+            <td 
+              {% if loop.index0 not in non_editable_indexes %}contenteditable="true"{% endif %}
+              data-id="{{ row['id'] }}"
+              data-field="{{ field }}"
+              class="editable">
+              {{ v }}
+            </td>
           {% endfor %}
+
           <td>
             <form method="post"
                   action="{{ url_for('admin_delete', table=table, id=row['id']) }}"

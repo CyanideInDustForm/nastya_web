@@ -108,3 +108,47 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+
+// ---------- AJAX-поиск для search.html ----------
+document.addEventListener("DOMContentLoaded", () => {
+  const searchForm = document.querySelector("form#searchOne"); // форма mode=one
+  const resultsContainer = document.getElementById("results"); // контейнер для таблицы
+
+  if (!searchForm || !resultsContainer) return;
+
+  const debounce = (fn, delay) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn(...args), delay);
+    };
+  };
+
+  const fetchResults = async () => {
+    const params = new URLSearchParams(new FormData(searchForm));
+    params.set("mode", "one");
+
+    try {
+      const res = await fetch(`/search?${params.toString()}`, {
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const html = await res.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+      const newTable = doc.getElementById("results");
+      if (newTable) {
+        resultsContainer.innerHTML = newTable.innerHTML;
+      }
+    } catch (err) {
+      showToast(`Ошибка поиска: ${err.message}`, "danger");
+    }
+  };
+
+  // Авто-запуск при вводе
+  searchForm.querySelectorAll("input, select").forEach(el => {
+    el.addEventListener("input", debounce(fetchResults, 400));
+    el.addEventListener("change", debounce(fetchResults, 400));
+  });
+});

@@ -30,58 +30,87 @@
         {% if meta.entity == 'readers' %}
           <div class="col-md-3">
             <label class="form-label">ФИО начинается с</label>
-            <input class="form-control" name="full_name_prefix">
+            <input class="form-control" name="full_name_prefix"
+                   value="{{ request.args.get('full_name_prefix','') }}">
           </div>
           <div class="col-md-3">
             <label class="form-label">Билет начинается с</label>
-            <input class="form-control" name="card_prefix">
+            <input class="form-control" name="card_prefix"
+                   value="{{ request.args.get('card_prefix','') }}">
           </div>
           <div class="col-md-3">
             <label class="form-label">Телефон содержит</label>
-            <input class="form-control" name="phone_contains">
+            <input class="form-control" name="phone_contains"
+                   value="{{ request.args.get('phone_contains','') }}">
           </div>
 
         {% elif meta.entity == 'books' %}
           <div class="col-md-3">
             <label class="form-label">Название начинается с</label>
-            <input class="form-control" name="title_prefix">
+            <input class="form-control" name="title_prefix"
+                   value="{{ request.args.get('title_prefix','') }}">
           </div>
           <div class="col-md-3">
             <label class="form-label">Автор</label>
-            <select class="form-select" name="author">
-              <option value="">(любой)</option>
-              {% for a in authors %}
-                <option value="{{ a.author }}">{{ a.author }}</option>
-              {% endfor %}
-            </select>
+            <div class="input-group">
+              <select class="form-select" name="author">
+                <option value="">(любой)</option>
+                {% for a in authors %}
+                  <option value="{{ a.author }}"
+                  {% if request.args.get('author') == a.author %}selected{% endif %}>
+                    {{ a.author }}
+                  </option>
+                {% endfor %}
+              </select>
+              <a class="btn btn-outline-secondary" href="{{ url_for('admin', table='books') }}"
+                 title="Добавить автора">+</a>
+            </div>
           </div>
           <div class="col-md-3">
             <label class="form-label">Год издания</label>
-            <input class="form-control" type="number" name="publish_year" min="1800" max="2026">
+            <input class="form-control" type="number" name="publish_year"
+                   min="1800" max="2026"
+                   value="{{ request.args.get('publish_year','') }}">
           </div>
 
         {% elif meta.entity == 'loans' %}
           <div class="col-md-3">
             <label class="form-label">Статус</label>
-            <select class="form-select" name="status_id">
-              <option value="">(любой)</option>
-              {% for s in statuses %}
-                <option value="{{ s.id }}">{{ s.title }}</option>
-              {% endfor %}
-            </select>
+            <div class="input-group">
+              <select class="form-select" name="status_id">
+                <option value="">(любой)</option>
+                {% for s in statuses %}
+                  <option value="{{ s.id }}"
+                  {% if request.args.get('status_id') == s.id|string %}selected{% endif %}>
+                    {{ s.title }}
+                  </option>
+                {% endfor %}
+              </select>
+              <a class="btn btn-outline-secondary" href="{{ url_for('admin', table='statuses') }}"
+                 title="Добавить статус">+</a>
+            </div>
           </div>
           <div class="col-md-3">
             <label class="form-label">Библиотекарь</label>
-            <select class="form-select" name="librarian_id">
-              <option value="">(любой)</option>
-              {% for lb in librarians %}
-                <option value="{{ lb.id }}">{{ lb.full_name }}</option>
-              {% endfor %}
-            </select>
+            <div class="input-group">
+              <select class="form-select" name="librarian_id">
+                <option value="">(любой)</option>
+                {% for lb in librarians %}
+                  <option value="{{ lb.id }}"
+                  {% if request.args.get('librarian_id') == lb.id|string %}selected{% endif %}>
+                    {{ lb.full_name }}
+                  </option>
+                {% endfor %}
+              </select>
+              <a class="btn btn-outline-secondary" href="{{ url_for('admin', table='librarians') }}"
+                 title="Добавить библиотекаря">+</a>
+            </div>
           </div>
           <div class="col-md-3">
             <label class="form-label">Выдача начиная с</label>
-            <input class="form-control" type="date" name="issue_from" min="2026-01-01">
+            <input class="form-control" type="date" name="issue_from"
+                   min="2026-01-01"
+                   value="{{ request.args.get('issue_from','') }}">
           </div>
         {% endif %}
 
@@ -101,19 +130,30 @@
 
         <div class="col-md-6">
           <label class="form-label">Читатель</label>
-          <select class="form-select" name="reader_id" id="cascadeReader">
-            <option value="">(выберите)</option>
-            {% for r in readers %}
-              <option value="{{ r.id }}">{{ r.full_name }}</option>
-            {% endfor %}
-          </select>
+          <div class="input-group">
+            <select class="form-select" name="reader_id" id="cascadeReader">
+              <option value="">(выберите)</option>
+              {% for r in readers %}
+                <option value="{{ r.id }}"
+                {% if request.args.get('reader_id') == r.id|string %}selected{% endif %}>
+                  {{ r.full_name }}
+                </option>
+              {% endfor %}
+            </select>
+            <a class="btn btn-outline-secondary" href="{{ url_for('admin', table='readers') }}"
+               title="Добавить читателя">+</a>
+          </div>
         </div>
 
         <div class="col-md-6">
           <label class="form-label">Книга (из выдач читателя)</label>
-          <select class="form-select" name="book_id" id="cascadeBook">
-            <option value="">(сначала выберите читателя)</option>
-          </select>
+          <div class="input-group">
+            <select class="form-select" name="book_id" id="cascadeBook">
+              <option value="">(сначала выберите читателя)</option>
+            </select>
+            <a class="btn btn-outline-secondary" href="{{ url_for('admin', table='books') }}"
+               title="Добавить книгу">+</a>
+          </div>
         </div>
 
         <div class="col-12">
